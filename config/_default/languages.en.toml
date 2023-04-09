@@ -1,0 +1,23 @@
+languageCode = "en"
+languageName = "English"
+displayName = "EN"
+isoCode = "en"
+weight = 1
+rtl = false
+
+title = "/home/astr0n8t/blog"
+description = "just a guy who likes cyber"
+copyright = "Nathan Higley"
+
+dateFormat = "2 January 2006"
+
+[author]
+name = "Nathan Higley"
+image = "img/astr0n8t.jpg"
+headline = "~/blog"
+bio = "just a guy who likes cyber"
+links = [
+  { twitter = "https://twitter.com/astr0n8t" },
+  { github = "https://github.com/astr0n8t" },
+  { linkedin = "https://linkedin.com/in/astr0n8t" },
+]
