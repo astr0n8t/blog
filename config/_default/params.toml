@@ -17,7 +17,7 @@ enableCodeCopy = true
 
 disableImageOptimization = false
 
-defaultBackgroundImage = "img/astr0n8t.png" # used as default for background images 
+defaultBackgroundImage = "img/background-2.png" # used as default for background images 
 
 # highlightCurrentMenuArea = true
 smartTOC = true
@@ -35,7 +35,7 @@ smartTOC = true
 
 [homepage]
   layout = "background" # valid options: page, profile, hero, card, background, custom
-  homepageImage = "img/astr0n8t.jpg" # used in: hero, and card
+  homepageImage = "img/background-1.png" # used in: hero, and card
   showRecent = true
   showRecentItems = 5
   showMoreLink = true
