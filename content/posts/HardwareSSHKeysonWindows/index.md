@@ -10,19 +10,6 @@ description: ""
 
 tags: [SSH, Security]
 categories: [Windows, WSL]
-
-hiddenFromHomePage: false
-hiddenFromSearch: false
-
-featuredImage: ""
-featuredImagePreview: "featured.png"
-
-toc:
-  enable: true
-math:
-  enable: false
-lightgallery: false
-license: ""
 ---
 
 I recently acquired a hardware security key which has the ability to store SSH keys of the type ed25519-sk.  I thought this was useful, as an issue if you use multiple operating systems is always having access to your SSH keys.  Unfortunately, while I found the native Linux commands to set this up, I didn't find much support on how to do this properly on Windows or WSL.
@@ -114,7 +101,7 @@ Now when you need to use your SSH key, you will get a prompt like this:
 Once you enter your pin, it should prompt you to tap your security key:
 
 <center>
-<img alt="Windows Hello Touch Prompt" src="featured.png" width=50% height=auto></img>
+<img alt="Windows Hello Touch Prompt" src="windows_hello.png" width=50% height=auto></img>
 </center>
 
 Once you tap your security key, you should be authenticated to whatever you were trying to use your SSH key for.
