@@ -5,9 +5,9 @@
 # Refer to the theme docs for more details about each of these parameters.
 # https://blowfish.page/docs/configuration/#theme-parameters
 
-colorScheme = "fire"
+colorScheme = "astr0n8t"
 defaultAppearance = "dark" # valid options: light or dark
-autoSwitchAppearance = false
+autoSwitchAppearance = true
 
 enableSearch = true
 enableCodeCopy = true
@@ -21,7 +21,7 @@ defaultBackgroundImage = "img/background-2.png" # used as default for background
 
 # highlightCurrentMenuArea = true
 smartTOC = true
-# smartTOCHideUnfocusedChildren = true
+smartTOCHideUnfocusedChildren = true
 
 [header]
   layout = "fixed" # valid options: basic, fixed, fixed-fill, fixed-fill-blur
@@ -62,7 +62,7 @@ smartTOC = true
   seriesOpened = false
   showHeadingAnchors = true
   showPagination = true
-  invertPagination = false
+  invertPagination = true
   showReadingTime = true
   showTableOfContents = true
   showTaxonomies = false
@@ -70,6 +70,7 @@ smartTOC = true
   showWordCount = true
   showSummary = true
   sharingLinks = [ "linkedin", "twitter", "reddit" ]
+  showComments = true
 
 [list]
   showHero = true

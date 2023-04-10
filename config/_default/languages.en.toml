@@ -5,7 +5,7 @@ isoCode = "en"
 weight = 1
 rtl = false
 
-title = "/home/astr0n8t/blog"
+title = "~/blog"
 description = "just a guy who likes cyber"
 copyright = "Nathan Higley"
 
@@ -14,7 +14,7 @@ dateFormat = "2 January 2006"
 [author]
 name = "Nathan Higley"
 image = "img/astr0n8t.jpg"
-headline = "~/blog"
+headline = "/home/astr0n8t/blog"
 bio = "just a guy who likes cyber"
 links = [
   { twitter = "https://twitter.com/astr0n8t" },

@@ -42,15 +42,33 @@
 #  pageRef = "categories/awesome"
 #  weight = 20
 
-#[[main]]
-#  name = "Categories"
-#  pageRef = "categories"
-#  weight = 20
+[[main]]
+  name = "categories"
+  pageRef = "categories"
+  weight = 20
 
-#[[main]]
-#  name = "Tags"
-#  pageRef = "tags"
-#  weight = 30
+[[main]]
+  name = "tags"
+  pageRef = "tags"
+  weight = 30
+
+[[main]]
+  identifier = "twitter"
+  pre = "twitter"
+  url = "https://twitter.com/astr0n8t"
+  weight = 60
+
+[[main]]
+  identifier = "linkedin"
+  pre = "linkedin"
+  url = "https://linkedin.com/in/astr0n8t"
+  weight = 70
+
+[[main]]
+  identifier = "github"
+  pre = "github"
+  url = "https://github.com/astr0n8t"
+  weight = 80
 
 
 # -- Footer Menu --
