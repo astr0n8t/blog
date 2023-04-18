@@ -342,7 +342,7 @@ while( true ) {
 
 #### second_half.c
 
-The next while loop works with the second half of the flag.  It xors each character with the sum of the third and fifth characters in the key combined with "+ 0x97U".  This is actually not the correct formula... Or it is... Ghidra is really confusing here, but if you look at the actual assembly, it turns out what is actually happening here is that insted of adding 0x97, the program is subtracting 0x69 from this value.  It is ultimately a lesson in that Ghidra is not always correct in how it decompiles things.
+The next while loop works with the second half of the flag.  It xors each character with the sum of the third and fifth characters in the key combined with "+ 0x97U".  This is actually not the correct formula... Or it is... Ghidra is really confusing here, but if you look at the actual assembly, it turns out what is actually happening here is that instead of adding 0x97, the program is subtracting 0x69 from this value.  It is ultimately a lesson in that Ghidra is not always correct in how it decompiles things.
 ```
 k = 0;
 while( true ) {
@@ -402,6 +402,6 @@ $ ./solve.py
 SummitCTF{p35Ky_fuNc710N_C4115}
 ```
 
-I enjoyed this challenge even though I wasn't able to solve it before the CTF ended.  Looking back on it now, it was a lot simpler than I made it, but I'll take it as a learning opportunity and try to not overcomplicate similar problems in the future.
+I enjoyed this challenge even though I wasn't able to solve it before the CTF ended.  Looking back on it now, it was a lot simpler than I made it, but I'll take it as a learning opportunity and try to not over complicate similar problems in the future.
 
 Thanks for reading!
