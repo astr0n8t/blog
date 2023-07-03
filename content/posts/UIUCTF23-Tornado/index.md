@@ -9,7 +9,7 @@ authorLink: ""
 description: ""
 
 tags: [ctf, writeup]
-categories: [Writeups, UIUCTFCTF 2023]
+categories: [Writeups, UIUCTF 2023]
 
 hiddenFromHomePage: false
 hiddenFromSearch: false
@@ -22,7 +22,7 @@ lightgallery: false
 license: ""
 ---
 
-Tornado was a misc challenge that involved a singular wav file with the hint that it was encoded using SAME encoding. If you want to learn more about this encoding, you can read some more [here](https://en.wikipedia.org/wiki/Specific_Area_Message_Encoding), but essentially it boils down to being the way that emergency weather alerts are sent within the US (and other some other countries as well).
+Tornado was a misc challenge from [UIUCTF 2023](https://ctftime.org/event/1899/) that involved a singular wav file with the hint that it was encoded using SAME encoding. If you want to learn more about this encoding, you can read some more [here](https://en.wikipedia.org/wiki/Specific_Area_Message_Encoding), but essentially it boils down to being the way that emergency weather alerts are sent within the US (and other some other countries as well).
 
 Upon doing some research on how to actually read this file, I came across [sameold](https://github.com/cbs228/sameold) which contains a SAME decoder, samedec, written in rust, meant to be used with a Raspberry Pi or PC to receive these emergency alerts.  It took a little bit of trial and error to realize that there is a specific way to read in wav files:
 ```
