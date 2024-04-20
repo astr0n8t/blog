@@ -6,6 +6,23 @@ theme = "github.com/nunocoracao/blowfish/v2"
 baseURL = "https://dev.blog.nathanhigley.com/"
 defaultContentLanguage = "en"
 
+title = "~/blog"
+description = "just a guy who likes cyber"
+copyright = "Nathan Higley"
+
+dateFormat = "2 January 2006"
+
+[author]
+name = "Nathan Higley"
+image = "img/astr0n8t.jpg"
+headline = "/home/astr0n8t/blog"
+bio = "just a guy who likes cyber"
+links = [
+  { twitter = "https://twitter.com/astr0n8t" },
+  { github = "https://github.com/astr0n8t" },
+  { linkedin = "https://linkedin.com/in/astr0n8t" },
+]
+
 # pluralizeListTitles = "true" # hugo function useful for non-english languages, find out more in  https://gohugo.io/getting-started/configuration/#pluralizelisttitles
 
 enableRobotsTXT = true
