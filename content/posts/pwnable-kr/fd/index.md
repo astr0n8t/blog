@@ -18,6 +18,9 @@ math:
   enable: false
 lightgallery: false
 license: ""
+
+series: ["pwnable.kr"]
+series_order: 1
 ---
 
 Welcome to the first installation in my walkthrough of the https://pwnable.kr Toddler's Bottle category of challenges.  The idea is that as I start to go through all of these challenges, I'm going to make a walkthrough and post it here.  Hopefully I will be able to keep this up once a week and in this way finish out this series as well as keep myself motivated to finish the first category.
