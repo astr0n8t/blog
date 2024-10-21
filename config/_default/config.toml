@@ -3,7 +3,7 @@
 # https://blowfish.page/docs/getting-started/
 
 theme = "github.com/nunocoracao/blowfish/v2"
-baseURL = "https://dev.blog.nathanhigley.com/"
+baseURL = "https://blog.nathanhigley.com/"
 defaultContentLanguage = "en"
 
 title = "~/blog"
@@ -31,8 +31,6 @@ summaryLength = 0
 
 buildDrafts = false
 buildFuture = false
-
-googleAnalytics = "G-T912XSVBN2"
 
 [imaging]
   anchor = 'Center'
