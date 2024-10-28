@@ -20,7 +20,7 @@ lightgallery: false
 license: ""
 ---
 
-# Motivation
+## Motivation
 
 The first question when beginning something is asking yourself why?  In this case, the reason was more curiosity than anything specific.  I run Proxmox on my old gaming laptop and only really use it for random experiments.  It has quite a bit of power for that and seems to work great.  Given that it is a gaming laptop, it has a dedicated graphics card inside, and I wondered if I would be able to pass it through to a VM to be able to do things like run Windows and play games or run Linux and try some machine learning with CUDA.  
 
@@ -32,9 +32,9 @@ Things to know is that this may or may not work for you.  If you have the exact 
 
 Certain Optimus laptops are either muxed or muxless.  What does that mean?  Basically it means that on some laptops the dedicated Nvidia GPU is wired directly to the HDMI port on the laptop whereas on others it is not.  That doesn't mean all hope is lost though as there is a way to get the integrated Intel graphics working in addition as well, but it is a lot more effort that I did not end up needing to do.  I will leave the resources I used at the end of the post for anyone who is curious and if enough people are interested I can also make a post on that.
 
-# Getting Started
+## Getting Started
 
-## Obtaining the vBIOS
+### Obtaining the vBIOS
 
 So the first thing you will need when starting is a copy of the vBIOS of your GPU.  For me, most of the ways to do this online did not work.  I would get a vague `Input/Output Error` when trying to perform it in Linux.
 
@@ -51,7 +51,7 @@ HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Class\{4d36e968-e325-11ce-bf
 
 I had to switch out the `0002` to `0001` but whichever number has the `Session` key should be what you want.  Export that key and save it somewhere.
 
-### Extracting from the Registry Key Method 1
+#### Extracting from the Registry Key Method 1
 
 The easiest way to do this next step is to use this command that I made for macOS (but I think should work on Linux as well?):
 ```sh
@@ -66,7 +66,7 @@ vbios.bin: BIOS (ia32) ROM Ext. IBM comp. Video "IBM VGA Compatible\001" (211*51
 
 And the file size for me was `262144` bytes.
 
-### Extracting from the Registry Key Method 2
+#### Extracting from the Registry Key Method 2
 
 If for some reason that doesn't work or you want to do it on Windows, the steps are pretty much as follows:
 
@@ -88,15 +88,15 @@ If for some reason that doesn't work or you want to do it on Windows, the steps 
 
 Now the same things should apply from before. I did this second method at first before creating the one liner out of curiosity and spite because I'd rather have a quick way to do things from the CLI than use a GUI.
 
-# Proxmox Configuration
+## Proxmox Configuration
 
 Okay, now we have the first file we need, which is also the most important.
 
-## Proxmox Host Settings
+### Proxmox Host Settings
 
 First things first, we need to follow the normal [Proxmox PCI-E Passthrough Guide](https://pve.proxmox.com/wiki/PCI(e)_Passthrough).
 
-### Getting Hardware IDs
+#### Getting Hardware IDs
 
 So let's grab some hardware IDs.
 
@@ -114,7 +114,7 @@ root@proxmox:~# lspci -nnk
 ...
 ```
 
-### Drivers
+#### Drivers
 
 Ideally you have not installed the nvidia drivers.  If you have, I highly recommend uninstalling them now before going any futher:
 ```sh
@@ -125,7 +125,7 @@ If you choose not to do this, and want to simply blacklist the drivers, just kno
 
 And reboot your host to make sure it works.
 
-### Kernel Parameters
+#### Kernel Parameters
 
 The first thing you need to do is enable IOMMU, so for an Intel CPU add this to the `GRUB_CMDLINE_LINUX_DEFAULT` line in `/etc/default/grub` :
 ```
@@ -142,7 +142,7 @@ Now run this to update your GRUB configuration:
 update-grub2
 ```
 
-### Kernel Modules
+#### Kernel Modules
 
 Next you need the VFIO kernel modules, so add these lines to `/etc/modules` :
 ```
@@ -162,7 +162,7 @@ And now do a reboot:
 reboot
 ```
 
-### Sanity Check
+#### Sanity Check
 
 At this point run the following command to make sure the kernel modules are loaded:
 ```sh
@@ -192,7 +192,7 @@ root@proxmox:~# lspci -nnk
 ...
 ```
 
-### Copying over the vBIOS
+#### Copying over the vBIOS
 
 The last thing to do is to copy over the vBIOS.
 
@@ -200,9 +200,9 @@ Put it in this directory: `/usr/share/kvm/` and name it what you want.  I named 
 
 At this point, you should be good to go to create your VMs and get going.
 
-## VM Creation and Configuration
+### VM Creation and Configuration
 
-### Proxmox WebUI
+#### Proxmox WebUI
 
 Now in Proxmox, create your VM, but do not start it yet.
 Here is a picture of all the settings you need (RAM and CPU dedicated is arbitrary althought the CPU should be host):
@@ -211,7 +211,7 @@ Here is a picture of all the settings you need (RAM and CPU dedicated is arbitra
 Specifically for the PCI device, you need the following after selecting your card in the dropdown (replacing vendor/device IDs and sub-vendor/device IDs with the output of lspci and the vBIOS name with whatever you named the vBIOS):
 ![Proxmox PCIE Configuration](proxmox-vm-pcie-configuration.png)
 
-### Proxmox VM Manual Configuration
+#### Proxmox VM Manual Configuration
 
 Now for the magic bits that I pulled from [this GitHub repository](https://github.com/lion328/gpu-passthrough/tree/master)
 
@@ -237,7 +237,7 @@ Here is a diagram courtesy of an LLM:
 
 Additionally, the ACPI table adds a battery to your VM which is required for the Windows Nvidia drivers to install properly.
 
-#### AML Creation
+##### AML Creation
 
 Now SSH into your proxmox host, and you will need to create the following file somewhere, replacing `\_SB.PCI0.SE0.S00` with the proper values for your card. 
 
@@ -396,7 +396,7 @@ iasl /usr/share/kvm/ssdt.asl
 
 Which should produce `/usr/share/kvm/ssdt.aml` which is the compiled version of the file.
 
-#### VM File Edit
+##### VM File Edit
 
 Now open up the configuration file of your VM in a text editor, it should be in `/etc/pve/qemu-server/<vm-id>.conf`
 
@@ -406,7 +406,7 @@ args: -acpitable 'file=/usr/share/kvm/ssdt.aml' -fw_cfg 'name=opt/com.lion328/nv
 cpu: host
 ```
 
-# Booting the VM
+## Booting the VM
 
 And now you should be good to boot the VM!  
 
@@ -417,13 +417,13 @@ As you can see from this screenshot, its running in this guest with the nvidia d
 
 If you are using Windows, then make sure to install the Nvidia drivers from their website and it should install properly and work, and you should see the device in Device Manager.
 
-## Headless Mode
+### Headless Mode
 
 If you want to use the HDMI port on your device, you should be able to do so now, and you can even disable the Proxmox built-in display by checking the `Primary GPU` field in your PCI-E passthrough dialog in the WebUI.  Make sure to pass through a USB keyboard and mouse if you want to do this.
 
 When you do that, you should see output on your connected display and it shouldn't seem like you're in a VM at all other than the fact that you know you are.
 
-## Troubleshooting
+### Troubleshooting
 
 I recommend starting your VM with the CLI:
 ```sh
@@ -434,7 +434,7 @@ This will print out any errors immediately to the console and allows for easier 
 
 Sometimes, my Proxmox host prints a weird ACPI error to the console and crashes.  This usually happens when booting a new VM when the GPU has been powered down abruptly and not initialized correctly.
 
-# Further Research
+## Further Research
 
 If at this point, you can't get something to work or you want to figure out how to get your Intel integrated graphics passed through, here are all the links from my research: (if someone needs it I can create a guide for Intel passthrough as I did get it to work but I just don't use it personally and right now it involves patching and re-building OVMF which seemed like a lot for this guide)
 
