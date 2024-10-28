@@ -205,10 +205,10 @@ At this point, you should be good to go to create your VMs and get going.
 ### Proxmox WebUI
 
 Now in Proxmox, create your VM, but do not start it yet.
-Here is a picture of all the settings you need:
+Here is a picture of all the settings you need (RAM and CPU dedicated is arbitrary althought the CPU should be host):
 ![Proxmox Configuration](proxmox-vm-configuration.png)
 
-Specifically for the PCI device, you need the following (replacing vendor/device IDs and sub-vendor/device IDs with the output of lspci and the vBIOS name with whatever you named the vBIOS):
+Specifically for the PCI device, you need the following after selecting your card in the dropdown (replacing vendor/device IDs and sub-vendor/device IDs with the output of lspci and the vBIOS name with whatever you named the vBIOS):
 ![Proxmox PCIE Configuration](proxmox-vm-pcie-configuration.png)
 
 ### Proxmox VM Manual Configuration
@@ -436,7 +436,7 @@ Sometimes, my Proxmox host prints a weird ACPI error to the console and crashes.
 
 # Further Research
 
-If at this point, you can't get something to work or you want to figure out how to get your Intel integrated graphics passed through, here are all the links from my research: (if someone needs it I can create a guide for Intel passthrough I did get it to work I just don't use it personally and right now it involves patching and re-building OVMF)
+If at this point, you can't get something to work or you want to figure out how to get your Intel integrated graphics passed through, here are all the links from my research: (if someone needs it I can create a guide for Intel passthrough as I did get it to work but I just don't use it personally and right now it involves patching and re-building OVMF which seemed like a lot for this guide)
 
 - [qemu(1) — Arch manual pages](https://man.archlinux.org/man/qemu.1.en)
 - [[SOLVED] NVIDIA can't power off after unplugging, blocks shutdown (Page 2) / Laptop Issues / Arch Linux Forums](https://bbs.archlinux.org/viewtopic.php?id=295682&p=2)
