@@ -28,7 +28,7 @@ I had never done this before, mainly because everywhere you look on the internet
 
 # Before you Start
 
-Things to know is that this may or may not work for you.  If you have the exact same laptop as me: Dell G5 15 5587 with Nvidia GTX 1060 6GB then it probably will.  Otherwise your mileage may vary but this technique seems universalish from what I gathered during research.
+Things to know is that this may or may not work for you.  If you have the exact same laptop as me: Dell G5 15 5587 with Nvidia GTX 1060 6GB then it probably will.  Otherwise your mileage may vary but this technique seems universal from what I gathered during research.
 
 Certain Optimus laptops are either muxed or muxless.  What does that mean?  Basically it means that on some laptops the dedicated Nvidia GPU is wired directly to the HDMI port on the laptop whereas on others it is not.  That doesn't mean all hope is lost though as there is a way to get the integrated Intel graphics working in addition as well, but it is a lot more effort that I did not end up needing to do.  I will leave the resources I used at the end of the post for anyone who is curious and if enough people are interested I can also make a post on that.
 
