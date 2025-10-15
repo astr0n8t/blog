@@ -12,6 +12,7 @@ autoSwitchAppearance = true
 enableSearch = true
 enableCodeCopy = true
 
+
 # mainSections = ["section1", "section2"]
 # robots = ""
 
@@ -22,6 +23,19 @@ defaultBackgroundImage = "img/background-2.png" # used as default for background
 # highlightCurrentMenuArea = true
 smartTOC = true
 smartTOCHideUnfocusedChildren = true
+
+[author]
+name = "Nathan Higley"
+image = "img/astr0n8t.jpg"
+headline = '''a blog about cyber, linux, and other things
+<br><br>bc1qlvf7x6ukx8e0me4yea9kum9t3k3jg6ems9w34h<br>
+'''
+bio = "amateur script kiddy"
+links = [
+  { twitter = "https://twitter.com/astr0n8t" },
+  { github = "https://github.com/astr0n8t" },
+  { linkedin = "https://linkedin.com/in/astr0n8t" }
+]
 
 [header]
   layout = "fixed" # valid options: basic, fixed, fixed-fill, fixed-fill-blur
