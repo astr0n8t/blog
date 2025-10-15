@@ -7,30 +7,21 @@ baseURL = "https://blog.nathanhigley.com/"
 defaultContentLanguage = "en"
 
 title = "~/blog"
-description = "just a guy who likes cyber"
+description = "hack stuff"
 copyright = "Nathan Higley"
 
 dateFormat = "2 January 2006"
 
-[author]
-name = "Nathan Higley"
-image = "img/astr0n8t.jpg"
-headline = "bc1qlvf7x6ukx8e0me4yea9kum9t3k3jg6ems9w34h"
-bio = "just a guy who likes cyber"
-links = [
-  { twitter = "https://twitter.com/astr0n8t" },
-  { github = "https://github.com/astr0n8t" },
-  { linkedin = "https://linkedin.com/in/astr0n8t" },
-]
-
 # pluralizeListTitles = "true" # hugo function useful for non-english languages, find out more in  https://gohugo.io/getting-started/configuration/#pluralizelisttitles
 
 enableRobotsTXT = true
-paginate = 10
 summaryLength = 0
 
 buildDrafts = false
 buildFuture = false
+
+[pagination]
+pagerSize = 10
 
 [imaging]
   anchor = 'Center'
