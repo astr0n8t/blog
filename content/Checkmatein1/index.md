@@ -4,7 +4,6 @@ subtitle: "MetaCTF CyberGames 2020"
 date: 2020-10-26T11:32:23-04:00
 lastmod: 2020-10-26T11:32:23-04:00
 draft: false
-draft: false
 author: "Nathan Higley"
 authorLink: ""
 description: ""
